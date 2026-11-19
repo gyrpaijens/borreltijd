@@ -8,7 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node --test src/schedule.test.js"
+    "test": "node --test src/schedule.test.js src/peopleLayout.test.js"
   },
   "devDependencies": {
     "vite": "^7.0.0"
