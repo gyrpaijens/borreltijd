@@ -1,4 +1,6 @@
 /* BorrelTijd: dynamische RGB-lasers van boven naar beneden */
+import { isLowPerf, onPerfChange } from '../perf.js';
+
 (() => {
   if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
   const canvas = document.createElement('canvas');
@@ -13,7 +15,7 @@
   const ctx = canvas.getContext('2d', { alpha: true });
   if (!ctx) return;
 
-  let w = 0, h = 0, dpr = 1, raf = 0;
+  let w = 0, h = 0, dpr = 1, raf = 0, lastDraw = 0;
   const fixtures = [0.08, 0.36, 0.64, 0.92].map((x, i) => ({
     x, phase: i * 1.7, hue: 255 + i * 17,
     rays: Array.from({length: 13}, (_, j) => ({
@@ -25,7 +27,8 @@
   }));
 
   function resize() {
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    // Zachte laserlijnen hebben geen hoge resolutie nodig; dat scheelt veel pixels.
+    dpr = isLowPerf() ? 0.75 : Math.min(window.devicePixelRatio || 1, 1.5);
     w = window.innerWidth; h = window.innerHeight;
     canvas.width = Math.round(w * dpr);
     canvas.height = Math.round(h * dpr);
@@ -34,6 +37,9 @@
 
   function draw(ms) {
     if (document.hidden) { raf = 0; return; }
+    // Zuinige modus: 30 fps is ruim genoeg voor langzaam zwaaiende lasers.
+    if (isLowPerf() && ms - lastDraw < 31) { raf = requestAnimationFrame(draw); return; }
+    lastDraw = ms;
     const t = ms * .001;
     ctx.clearRect(0, 0, w, h);
     ctx.globalCompositeOperation = 'lighter';
@@ -53,13 +59,22 @@
         grad.addColorStop(.16, `hsla(${hue},100%,66%,.68)`);
         grad.addColorStop(.72, `hsla(${hue},100%,57%,.24)`);
         grad.addColorStop(1, `hsla(${hue},100%,55%,0)`);
+        // Gloed: brede, transparante lijnen onder de kern. Veel goedkoper dan
+        // ctx.shadowBlur, dat per lijn een blur over het halve scherm rekent.
+        const core = Math.max(.65, r.width * (w / 1200));
+        const glow = 9 + (ri % 4) * 3;
         ctx.beginPath();
         ctx.moveTo(ox, oy);
         ctx.lineTo(x, y);
         ctx.strokeStyle = grad;
-        ctx.lineWidth = Math.max(.65, r.width * (w / 1200));
-        ctx.shadowColor = `hsl(${hue},100%,66%)`;
-        ctx.shadowBlur = 9 + (ri % 4) * 3;
+        ctx.globalAlpha = .07;
+        ctx.lineWidth = core + glow * 1.6;
+        ctx.stroke();
+        ctx.globalAlpha = .16;
+        ctx.lineWidth = core + glow * .6;
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+        ctx.lineWidth = core;
         ctx.stroke();
       });
       // Gloed rond de plafondfixture, met een zachte neerwaartse lichtbundel.
@@ -71,12 +86,12 @@
       ctx.fillRect(ox - w*.07, 0, w*.14, h*.28);
     });
 
-    ctx.shadowBlur = 0;
     ctx.globalCompositeOperation = 'source-over';
     raf = requestAnimationFrame(draw);
   }
 
   window.addEventListener('resize', resize, {passive:true});
+  onPerfChange(resize);
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       if (raf) cancelAnimationFrame(raf);

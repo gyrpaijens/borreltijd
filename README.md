@@ -49,6 +49,8 @@ src/schedule.test.js          tests (DST, jaarwisseling, fases)
 src/people.js                 ← de poppetjes: lijst met kleuren, dansstijl en foto-nummer
 src/peopleLayout.js           plaatst de poppetjes in 2 rijen op de verhoging
 src/assets/faces/             ← de gezichtsfoto's (face_01.jpg, face_02.jpg, …)
+src/assets/audio/             ← muziek, aankondiging en geluidseffecten (mp3)
+src/perf.js                   zuinige weergave voor trage pc's (?kwaliteit=laag|hoog|auto)
 src/fx/lasers.js              laserlichten (canvas)
 src/fx/fireworks.js           vuurwerk tijdens de borrel
 src/legacy/borreltijd-app.js  de React/three.js-app, zoals aangeleverd (gecompileerd)
@@ -79,4 +81,5 @@ De losse teksten in de interface ("donderdag", "16:30", "16:20", "18:00") staan 
 
 `src/legacy/borreltijd-app.js` en `src/styles.css` komen uit één gecompileerd HTML-bestand, dus
 zonder originele JSX-bronbestanden. De app werkt 1-op-1 hetzelfde, maar die twee bestanden zijn niet
-prettig met de hand te bewerken (de geluiden zitten er nog in als base64). De demo-knoppen ("Toon 16:20", "Toon 16:30", "Live tijd") zitten nog in de interface.
+prettig met de hand te bewerken. De geluiden staan los in `src/assets/audio/`: een bestand vervangen
+(zelfde naam) is genoeg. De demo-knoppen ("Toon 16:20", "Toon 16:30", "Live tijd") zitten nog in de interface.
