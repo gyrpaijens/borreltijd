@@ -22,23 +22,6 @@ npm run build    # productiebuild in dist/
 
 Vereist Node 20.19 of nieuwer.
 
-## Online zetten: GitHub + Vercel
-
-1. Maak een lege repository op GitHub en push dit project:
-   ```bash
-   git init
-   git add .
-   git commit -m "BorrelTĳd wekelijkse aftel"
-   git branch -M main
-   git remote add origin https://github.com/<jouw-account>/borreltijd.git
-   git push -u origin main
-   ```
-2. Ga naar [vercel.com/new](https://vercel.com/new) en importeer de repository.
-3. Vercel herkent Vite zelf (Build Command `vite build`, Output Directory `dist`). Gewoon op **Deploy** klikken.
-
-Elke `git push` naar `main` zet daarna automatisch een nieuwe versie online.
-Er is geen server of API nodig: de klok loopt op het apparaat van de bezoeker, gerekend in Amsterdamse tijd.
-
 ## Structuur
 
 ```
