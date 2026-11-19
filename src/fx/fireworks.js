@@ -1,4 +1,6 @@
 /* BorrelTijd finale: gesproken PARTY + kleurrijk siervuurwerk. Werkt lokaal in Edge/Chrome. */
+import { isLowPerf, onPerfChange } from '../perf.js';
+
 (() => {
   const PARTY_SELECTOR = '[data-testid="borreltijd-celebration-takeover"]';
   let active = false;
@@ -13,7 +15,7 @@
 
   function resize() {
     if (!canvas) return;
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    dpr = isLowPerf() ? 1 : Math.min(window.devicePixelRatio || 1, 2);
     width = window.innerWidth;
     height = window.innerHeight;
     canvas.width = Math.round(width * dpr);
@@ -103,6 +105,7 @@
       document.body.appendChild(canvas);
       ctx = canvas.getContext('2d');
       window.addEventListener('resize', resize, { passive: true });
+      onPerfChange(resize);
     }
     resize(); lastFrame = 0;
     // Direct bij de start meerdere siervuurwerkboeketten over de hele breedte.

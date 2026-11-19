@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   build: {
-    // De app bevat three.js, audio en afbeeldingen in één bundel (±5,6 MB).
-    chunkSizeWarningLimit: 8000,
+    // De app bevat three.js en React in één bundel (±1,5 MB); audio staat los.
+    chunkSizeWarningLimit: 2000,
   },
 });
